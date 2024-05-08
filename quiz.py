@@ -34,6 +34,11 @@ questions = [
         "choices": ["2", "3", "4", "5"],
         "answer_index": 2,
     },
+    {
+        "question": "What is 5*13?",
+        "choices": ["72", "63", "34", "65"],
+        "answer_index": 3,
+    },
     # Add more questions as needed
 ]
 
