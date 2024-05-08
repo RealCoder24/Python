@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 class Quiz:
     def __init__(self, questions):
         self.questions = questions
@@ -40,3 +41,37 @@ questions = [
 # Start the quiz
 quiz = Quiz(questions)
 quiz.play()
+=======
+print('Welcome to AskPython Quiz')
+answer = input('Are you ready to play the Quiz? (yes/no): ')
+score = 0
+total_questions = 3
+
+if answer.lower() == 'yes':
+    answer = input('Question 1: What is your favorite programming language? ')
+    if answer.lower() == 'python':
+        score += 1
+        print('Correct!')
+    else:
+        print('Wrong Answer :(')
+
+    answer = input('Question 2: Do you follow any author on AskPython? ')
+    if answer.lower() == 'yes':
+        score += 1
+        print('Correct!')
+    else:
+        print('Wrong Answer :(')
+
+    answer = input('Question 3: What is the name of your favorite website for learning Python? ')
+    if answer.lower() == 'askpython':
+        score += 1
+        print('Correct!')
+    else:
+        print('Wrong Answer :(')
+
+    print(f'Thank you for playing this small quiz game. You attempted {score} questions correctly!')
+    mark = (score / total_questions) * 100
+    print(f'Marks obtained: {mark:.1f}')
+else:
+    print('Goodbye!')
+>>>>>>> 899b366d3988126237f74144bed115599f8702bc
