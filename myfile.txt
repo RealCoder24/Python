@@ -1,2 +1,3 @@
 echo is a very useful command to print text directly into a file from terminal
 Added a second line using terminal
+Added a third line using terminal
