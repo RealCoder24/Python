@@ -29,320 +29,362 @@ from copy import deepcopy
 # Third-party imports
 from tkinter import Tk, Button, DISABLED, ACTIVE, messagebox
 
-# sign variable to decide the turn of which player
-sign = 0
+class TicTacToeGame:
+    """
+    A class representing a Tic Tac Toe game with both single-player and multiplayer modes.
 
-# Creates an empty board
-board = [[" " for x in range(3)] for y in range(3)]
+    This class manages the game state, handles player moves, provides computer AI for 
+    single-player mode, and manages the graphical interface using tkinter. It supports 
+    both player vs player and player vs computer gameplay modes.
 
-# Check l(O/X) won the match or not
-# according to the rules of the game
+    Attributes:
+        board (list): 3x3 game board representing the current game state
+        sign (int): Counter to track player turns (even=X, odd=O)
+        button (list): 2D list of tkinter Button widgets for the game board GUI
+    """
 
+    def __init__(self):
+        """Initialize an empty game board and turn counter."""
+        # Creates an empty board
+        self.board = [[" " for x in range(3)] for y in range(3)]
+        # Turn counter: even=X's turn, odd=O's turn
+        self.sign = 0
+        # Will store the GUI buttons
+        self.button = None
+        # Flag to indicate if the game should stop (for single-player mode)
+        self.stop_game = False
 
-def winner(b, l):
-	"""
-	Check if player l ('X' or 'O') has won the game.
+    def winner(self, l, board=None):
+        """
+        Check if player l ('X' or 'O') has won the game.
 
-	Args:
-		b (list): The game board.
-		l (str): The player's symbol ('X' or 'O').
-	Returns:
-		bool: True if the player has won, False otherwise.
-	"""
-	return ((b[0][0] == l and b[0][1] == l and b[0][2] == l) or
-			(b[1][0] == l and b[1][1] == l and b[1][2] == l) or
-			(b[2][0] == l and b[2][1] == l and b[2][2] == l) or
-			(b[0][0] == l and b[1][0] == l and b[2][0] == l) or
-			(b[0][1] == l and b[1][1] == l and b[2][1] == l) or
-			(b[0][2] == l and b[1][2] == l and b[2][2] == l) or
-			(b[0][0] == l and b[1][1] == l and b[2][2] == l) or
-			(b[0][2] == l and b[1][1] == l and b[2][0] == l))
+        Args:
+            l (str): The player's symbol ('X' or 'O').
+            board (list, optional): The board to check. Defaults to self.board.
+        Returns:
+            bool: True if the player has won, False otherwise.
+        """
+        b = board if board is not None else self.board
+        return ((b[0][0] == l and b[0][1] == l and b[0][2] == l) or
+                (b[1][0] == l and b[1][1] == l and b[1][2] == l) or
+                (b[2][0] == l and b[2][1] == l and b[2][2] == l) or
+                (b[0][0] == l and b[1][0] == l and b[2][0] == l) or
+                (b[0][1] == l and b[1][1] == l and b[2][1] == l) or
+                (b[0][2] == l and b[1][2] == l and b[2][2] == l) or
+                (b[0][0] == l and b[1][1] == l and b[2][2] == l) or
+                (b[0][2] == l and b[1][1] == l and b[2][0] == l))
 
-# Configure text on button while playing with another player
-def get_text(i, j, gb, l1, l2):
-	"""
-	Handle a player's move in multiplayer mode, update board and check for win/tie.
+    def handle_multiplayer_move(self, i, j, gb, l1, l2):
+        """
+        Handle a player's move in multiplayer mode, update board and check for win/tie.
 
-	Args:
-		i (int): Row index.
-		j (int): Column index.
-		gb: Game board window.
-		l1: Player 1 label/button.
-		l2: Player 2 label/button.
-	"""
-	global sign
-	if board[i][j] == ' ':
-		if sign % 2 == 0:
-			l1.config(state=DISABLED)
-			l2.config(state=ACTIVE)
-			board[i][j] = "X"
-		else:
-			l2.config(state=DISABLED)
-			l1.config(state=ACTIVE)
-			board[i][j] = "O"
-		sign += 1
-		button[i][j].config(text=board[i][j])
-	if winner(board, "X"):
-		gb.destroy()
-		box = messagebox.showinfo("Winner", "Player 1 won the match")
-	elif winner(board, "O"):
-		gb.destroy()
-		box = messagebox.showinfo("Winner", "Player 2 won the match")
-	elif(isfull()):
-		gb.destroy()
-		box = messagebox.showinfo("Tie Game", "Tie Game")
+        Args:
+            i (int): Row index.
+            j (int): Column index.
+            gb: Game board window.
+            l1: Player 1 label/button.
+            l2: Player 2 label/button.
+        """
+        if self.board[i][j] == ' ':
+            if self.sign % 2 == 0:
+                l1.config(state=DISABLED)
+                l2.config(state=ACTIVE)
+                self.board[i][j] = "X"
+            else:
+                l2.config(state=DISABLED)
+                l1.config(state=ACTIVE)
+                self.board[i][j] = "O"
+            self.sign += 1
+            self.button[i][j].config(text=self.board[i][j])
 
-# Check if the player can push the button or not
+        if self.winner("X"):
+            gb.destroy()
+            messagebox.showinfo("Winner", "Player 1 won the match")
+        elif self.winner("O"):
+            gb.destroy()
+            messagebox.showinfo("Winner", "Player 2 won the match")
+        elif self.is_full():
+            gb.destroy()
+            messagebox.showinfo("Tie Game", "Tie Game")
 
+    def is_free(self, i, j):
+        """
+        Check if the cell at (i, j) is free.
 
-def isfree(i, j):
-	"""
-	Check if the cell at (i, j) is free.
+        Args:
+            i (int): Row index.
+            j (int): Column index.
+        Returns:
+            bool: True if cell is free, False otherwise.
+        """
+        return self.board[i][j] == " "
 
-	Args:
-		i (int): Row index.
-		j (int): Column index.
-	Returns:
-		bool: True if cell is free, False otherwise.
-	"""
-	return board[i][j] == " "
+    def is_full(self):
+        """
+        Check if the board is full (no empty spaces).
 
-# Check the board is full or not
+        Returns:
+            bool: True if board is full, False otherwise.
+        """
+        for row in self.board:
+            if ' ' in row:
+                return False
+        return True
 
+    def create_multiplayer_board(self, game_board, l1, l2):
+        """
+        Create the multiplayer game board GUI.
 
-def isfull():
-	"""
-	Check if the board is full (no empty spaces).
+        Args:
+            game_board: The main game window.
+            l1: Player 1 label/button.
+            l2: Player 2 label/button.
+        """
+        self.button = []
+        for i in range(3):
+            m = 3+i
+            self.button.append([])
+            for j in range(3):
+                get_t = partial(self.handle_multiplayer_move, i, j, game_board, l1, l2)
+                self.button[i].append(
+                    Button(
+                        game_board, 
+                        bd=5, 
+                        command=get_t, 
+                        height=4, 
+                        width=8
+                    )
+                )
+                self.button[i][j].grid(row=m, column=j)
+        game_board.mainloop()
 
-	Returns:
-		bool: True if board is full, False otherwise.
-	"""
-	flag = True
-	for i in board:
-		if(i.count(' ') > 0):
-			flag = False
-	return flag
+    def get_computer_move(self):
+        """
+        Decide the computer's next move using basic AI.
+        
+        The AI follows these rules in order:
+        1. Win if possible
+        2. Block opponent's win
+        3. Take center if free
+        4. Take a corner if free
+        5. Take any edge
 
-# Create the GUI of game board for play along with another player
+        Returns:
+            list: The [row, col] of the next move, or None if no moves left.
+        """
+        possible_moves = []
+        for i in range(3):
+            for j in range(3):
+                if self.board[i][j] == ' ':
+                    possible_moves.append([i, j])
 
+        if not possible_moves:
+            return None
+     
+        # Check for winning move or blocking opponent's win
+        for symbol in ['O', 'X']:
+            for move in possible_moves:
+                board_copy = deepcopy(self.board)
+                board_copy[move[0]][move[1]] = symbol
+                if self.winner(symbol, board_copy):
+                    return move
+                    
+        # Take center if available
+        if [1, 1] in possible_moves:
+            return [1, 1]
+            
+        # Take corners
+        corners = [move for move in possible_moves 
+                  if move in [[0, 0], [0, 2], [2, 0], [2, 2]]]
+        if corners:
+            return corners[random.randint(0, len(corners)-1)]
+            
+        # Take edges
+        edges = [move for move in possible_moves 
+                if move in [[0, 1], [1, 0], [1, 2], [2, 1]]]
+        if edges:
+            return edges[random.randint(0, len(edges)-1)]
+            
+        return None
 
-def gameboard_pl(game_board, l1, l2):
-	"""
-	Create the multiplayer game board GUI.
+    def handle_singleplayer_move(self, i, j, gb, l1, l2):
+        """
+        Handle a move in single-player mode, update board, check for win/tie, and trigger computer move.
 
-	Args:
-		game_board: The main game window.
-		l1: Player 1 label/button.
-		l2: Player 2 label/button.
-	"""
-	global button
-	button = []
-	for i in range(3):
-		m = 3+i
-		button.append(i)
-		button[i] = []
-		for j in range(3):
-			n = j
-			button[i].append(j)
-			get_t = partial(get_text, i, j, game_board, l1, l2)
-			button[i][j] = Button(
-				game_board, bd=5, command=get_t, height=4, width=8)
-			button[i][j].grid(row=m, column=n)
-	game_board.mainloop()
+        Args:
+            i (int): Row index.
+            j (int): Column index.
+            gb: Game board window.
+            l1: Player label/button.
+            l2: Computer label/button.
+        """
+        if self.board[i][j] == ' ' and not self.stop_game:
+            # Player's move
+            if self.sign % 2 == 0:
+                l1.config(state=DISABLED)
+                l2.config(state=ACTIVE)
+                self.board[i][j] = "X"
+                self.button[i][j].config(text="X")
+                self.sign += 1
 
-# Decide the next move of system
+                # Check if player won or game is tied
+                if self.winner("X"):
+                    gb.destroy()
+                    messagebox.showinfo("Winner", "Player won the match")
+                    return
+                elif self.is_full():
+                    gb.destroy()
+                    messagebox.showinfo("Tie Game", "Tie Game")
+                    return
 
+                # Computer's move
+                move = self.get_computer_move()
+                if move:
+                    self.button[move[0]][move[1]].config(state=DISABLED)
+                    self.board[move[0]][move[1]] = "O"
+                    self.button[move[0]][move[1]].config(text="O")
+                    self.sign += 1
+                    
+                    # Check if computer won
+                    if self.winner("O"):
+                        gb.destroy()
+                        messagebox.showinfo("Winner", "Computer won the match")
 
-def pc():
-	"""
-	Decide the computer's next move using basic AI.
+    def create_singleplayer_board(self, game_board, l1, l2):
+        """
+        Create the single-player game board GUI.
 
-	Returns:
-		list: The [row, col] of the next move, or None if no moves left.
-	"""
-	possiblemove = []
-	for i in range(len(board)):
-		for j in range(len(board[i])):
-			if board[i][j] == ' ':
-				possiblemove.append([i, j])
-	move = []
-	if possiblemove == []:
-		return
-	else:
-		for let in ['O', 'X']:
-			for i in possiblemove:
-				boardcopy = deepcopy(board)
-				boardcopy[i[0]][i[1]] = let
-				if winner(boardcopy, let):
-					return i
-		corner = []
-		for i in possiblemove:
-			if i in [[0, 0], [0, 2], [2, 0], [2, 2]]:
-				corner.append(i)
-		if len(corner) > 0:
-			move = random.randint(0, len(corner)-1)
-			return corner[move]
-		edge = []
-		for i in possiblemove:
-			if i in [[0, 1], [1, 0], [1, 2], [2, 1]]:
-				edge.append(i)
-		if len(edge) > 0:
-			move = random.randint(0, len(edge)-1)
-			return edge[move]
+        Args:
+            game_board: The main game window.
+            l1: Player label/button.
+            l2: Computer label/button.
+        """
+        self.button = []
+        for i in range(3):
+            m = 3+i
+            self.button.append([])
+            for j in range(3):
+                get_t = partial(self.handle_singleplayer_move, i, j, game_board, l1, l2)
+                self.button[i].append(
+                    Button(
+                        game_board,
+                        bd=5,
+                        command=get_t,
+                        height=4,
+                        width=8
+                    )
+                )
+                self.button[i][j].grid(row=m, column=j)
+        game_board.mainloop()
 
-# Configure text on button while playing with system
-
-
-def get_text_pc(i, j, gb, l1, l2):
-	"""
-	Handle a move in single-player mode, update board, check for win/tie, and trigger computer move.
-
-	Args:
-		i (int): Row index.
-		j (int): Column index.
-		gb: Game board window.
-		l1: Player label/button.
-		l2: Computer label/button.
-	"""
-	global sign
-	if board[i][j] == ' ':
-		if sign % 2 == 0:
-			l1.config(state=DISABLED)
-			l2.config(state=ACTIVE)
-			board[i][j] = "X"
-		else:
-			button[i][j].config(state=ACTIVE)
-			l2.config(state=DISABLED)
-			l1.config(state=ACTIVE)
-			board[i][j] = "O"
-		sign += 1
-		button[i][j].config(text=board[i][j])
-	x = True
-	if winner(board, "X"):
-		gb.destroy()
-		x = False
-		box = messagebox.showinfo("Winner", "Player won the match")
-	elif winner(board, "O"):
-		gb.destroy()
-		x = False
-		box = messagebox.showinfo("Winner", "Computer won the match")
-	elif(isfull()):
-		gb.destroy()
-		x = False
-		box = messagebox.showinfo("Tie Game", "Tie Game")
-	if(x):
-		if sign % 2 != 0:
-			move = pc()
-			button[move[0]][move[1]].config(state=DISABLED)
-			get_text_pc(move[0], move[1], gb, l1, l2)
-
-# Create the GUI of game board for play along with system
-
-
-def gameboard_pc(game_board, l1, l2):
-	"""
-	Create the single-player game board GUI.
-
-	Args:
-		game_board: The main game window.
-		l1: Player label/button.
-		l2: Computer label/button.
-	"""
-	global button
-	button = []
-	for i in range(3):
-		m = 3+i
-		button.append(i)
-		button[i] = []
-		for j in range(3):
-			n = j
-			button[i].append(j)
-			get_t = partial(get_text_pc, i, j, game_board, l1, l2)
-			button[i][j] = Button(
-				game_board, bd=5, command=get_t, height=4, width=8)
-			button[i][j].grid(row=m, column=n)
-	game_board.mainloop()
-
-# Initialize the game board to play with system
-
-
-def withpc(game_board):
-	"""
-	Initialize and start a single-player game against the computer.
-
-	Args:
-		game_board: The main menu window.
-	"""
-	game_board.destroy()
-	game_board = Tk()
-	game_board.title("Tic Tac Toe")
-	l1 = Button(game_board, text="Player : X", width=10)
-	l1.grid(row=1, column=1)
-	l2 = Button(game_board, text="Computer : O",
-				width=10, state=DISABLED)
-
-	l2.grid(row=2, column=1)
-	gameboard_pc(game_board, l1, l2)
-
-# Initialize the game board to play with another player
+    # Game initialization methods
 
 
-def withplayer(game_board):
-	"""
-	Initialize and start a multiplayer game.
+    def start_singleplayer(self, menu):
+        """
+        Initialize and start a single-player game against the computer.
 
-	Args:
-		game_board: The main menu window.
-	"""
-	game_board.destroy()
-	game_board = Tk()
-	game_board.title("Tic Tac Toe")
-	l1 = Button(game_board, text="Player 1 : X", width=10)
+        Args:
+            menu: The main menu window.
+        """
+        menu.destroy()
+        game_board = Tk()
+        game_board.title("Tic Tac Toe")
+        
+        # Create player buttons/labels
+        l1 = Button(game_board, text="Player : X", width=10)
+        l1.grid(row=1, column=1)
+        l2 = Button(game_board, text="Computer : O", width=10, state=DISABLED)
+        l2.grid(row=2, column=1)
+        
+        # Initialize game board
+        self.create_singleplayer_board(game_board, l1, l2)
 
-	l1.grid(row=1, column=1)
-	l2 = Button(game_board, text="Player 2 : O",
-				width=10, state=DISABLED)
-
-	l2.grid(row=2, column=1)
-	gameboard_pl(game_board, l1, l2)
-
-# main function
-
-
-def play():
-	"""
-	Launch the main menu and handle user selection for game mode or exit.
-	"""
-	menu = Tk()
-	menu.geometry("250x250")
-	menu.title("Tic Tac Toe")
-	wpc = partial(withpc, menu)
-	wpl = partial(withplayer, menu)
-
-	head = Button(menu, text="---Welcome to tic-tac-toe---",
-				activeforeground='red',
-				activebackground="yellow", bg="red",
-				fg="yellow", width=500, font='summer', bd=5)
-
-	B1 = Button(menu, text="Single Player", command=wpc,
-				activeforeground='red',
-				activebackground="yellow", bg="red",
-				fg="yellow", width=500, font='summer', bd=5)
-
-	B2 = Button(menu, text="Multi Player", command=wpl, activeforeground='red',
-				activebackground="yellow", bg="red", fg="yellow",
-				width=500, font='summer', bd=5)
-
-	B3 = Button(menu, text="Exit", command=menu.quit, activeforeground='red',
-				activebackground="yellow", bg="red", fg="yellow",
-				width=500, font='summer', bd=5)
-	head.pack(side='top')
-	B1.pack(side='top')
-	B2.pack(side='top')
-	B3.pack(side='top')
-	menu.mainloop()
+    # Initialize the game board for multiplayer mode
 
 
-# Call main function
+    def start_multiplayer(self, menu):
+        """
+        Initialize and start a multiplayer game.
+
+        Args:
+            menu: The main menu window.
+        """
+        menu.destroy()
+        game_board = Tk()
+        game_board.title("Tic Tac Toe")
+        
+        # Create player buttons/labels
+        l1 = Button(game_board, text="Player 1 : X", width=10)
+        l1.grid(row=1, column=1)
+        l2 = Button(game_board, text="Player 2 : O", width=10, state=DISABLED)
+        l2.grid(row=2, column=1)
+        
+        # Initialize game board
+        self.create_multiplayer_board(game_board, l1, l2)
+
+    def start_game(self):
+        """
+        Launch the main menu and handle user selection for game mode or exit.
+        """
+        menu = Tk()
+        menu.geometry("250x250")
+        menu.title("Tic Tac Toe")
+
+        # Create menu buttons
+        head = Button(menu,
+                    text="---Welcome to tic-tac-toe---",
+                    activeforeground='red',
+                    activebackground="yellow",
+                    bg="red",
+                    fg="yellow",
+                    width=500,
+                    font='summer',
+                    bd=5)
+
+        B1 = Button(menu,
+                    text="Single Player",
+                    command=lambda: self.start_singleplayer(menu),
+                    activeforeground='red',
+                    activebackground="yellow",
+                    bg="red",
+                    fg="yellow",
+                    width=500,
+                    font='summer',
+                    bd=5)
+
+        B2 = Button(menu,
+                    text="Multi Player",
+                    command=lambda: self.start_multiplayer(menu),
+                    activeforeground='red',
+                    activebackground="yellow",
+                    bg="red",
+                    fg="yellow",
+                    width=500,
+                    font='summer',
+                    bd=5)
+
+        B3 = Button(menu,
+                    text="Exit",
+                    command=menu.quit,
+                    activeforeground='red',
+                    activebackground="yellow",
+                    bg="red",
+                    fg="yellow",
+                    width=500,
+                    font='summer',
+                    bd=5)
+
+        # Pack buttons in order
+        head.pack(side='top')
+        B1.pack(side='top')
+        B2.pack(side='top')
+        B3.pack(side='top')
+
+        menu.mainloop()
+
+
+# Initialize and start game
 if __name__ == '__main__':
-	play()
+    game = TicTacToeGame()
+    game.start_game()

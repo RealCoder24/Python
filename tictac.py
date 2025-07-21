@@ -1,78 +1,97 @@
 
 """
-Tic Tac Toe game with GUI using tkinter.
+Tic Tac Toe game with GUI interface.
 
 This script allows two players to play Tic Tac Toe on a 3x3 grid.
-It features a graphical interface, win/tie detection, and 
-displays the winner or tie using message boxes.
-
-Functions:
-	clicked(r, c): Handle a player's move and update the board.
-	check_if_win(): Check for a win or tie after each move.
+It features a graphical interface, win/tie detection, and alternating turns.
 """
-
 # Importing Packages from tkinter
-from tkinter import *
-from tkinter import messagebox 
+from tkinter import Button, messagebox, Tk 
+# Initialize the game board buttons
+b = [
+    [0, 0, 0],
+    [0, 0, 0],
+    [0, 0, 0]
+]
 
-Player1 = 'X'
-stop_game = False
+# Initialize the game state
+states = [
+    [0, 0, 0],
+    [0, 0, 0],
+    [0, 0, 0]
+]
 
-def clicked(r, c):
-	"""
-	Handle a player's move, update the board, and check for a win or tie.
+class TicTacToe:
+    """
+    A class representing a Tic Tac Toe game with a graphical interface.
 
-	Args:
-		r (int): Row index.
-		c (int): Column index (unused in this implementation).
-	"""
-	global Player1
-	# global stop_game
+    This class manages the game state, handles player moves, and checks for win/tie conditions.
+    It uses tkinter buttons for the game board and displays message boxes for game outcomes.
 
-	if Player1 == "X" and states[r] == 0 and stop_game == False:
-		b[r].configure(text="X")
-		states[r] = 'X'
-		Player1 = 'O'
+    Attributes:
+        current_player (str): The symbol ('X' or 'O') of the current player.
+        stop_game (bool): Flag indicating whether the game has ended.
+    """
+    def __init__(self):
+        self.current_player = 'X'
+        self.stop_game = False
+        
+    def clicked(self, r, c):
+        """
+        Handle a player's move, update the board, and check for a win or tie.
 
-	if Player1 == 'O' and states[r] == 0 and stop_game == False:
-		b[r].configure(text='O')
-		states[r] = "O"
-		Player1 = "X"
+        Args:
+            r (int): Row index.
+            c (int): Column index.
+        """
+        if self.current_player == "X" and states[r][c] == 0 and not self.stop_game:
+            b[r][c].configure(text="X")
+            states[r][c] = 'X'
+            self.current_player = 'O'
 
-	check_if_win()
-	# check_if_tie()
-	# if check_if_win() == False:
-	#     tie = messagebox.showinfo("tie","its tie")
-	#     return tie
-def check_if_win():
-	"""
-	Check for a win or tie after each move and display a message box if the game ends.
-	"""
-	global stop_game
-	# count = 0
+        if self.current_player == 'O' and states[r][c] == 0 and not self.stop_game:
+            b[r][c].configure(text='O')
+            states[r][c] = "O"
+            self.current_player = "X"
 
-	for i in range(3):
-		if states[i][0] == states[i][1] == states[i][2] != 0:
-			stop_game = True
-			messagebox.showinfo("Winner", states[i][0] + " Won")
-			# disableAllButton()
-			break
-		if states[0][i] == states[1][i] == states[2][i] != 0:
-			stop_game = True
-			messagebox.showinfo("Winner", states[0][i] + " Won!")
-			break
+        self.check_if_win()
 
-	if states[0][0] == states[1][1] == states[2][2] != 0:
-		stop_game = True
-		messagebox.showinfo("Winner", states[0][0] + " Won!")
+    def check_if_win(self):
+        """
+        Check for a win or tie after each move and display a message box if the game ends.
+        """
 
-	elif states[0][2] == states[1][1] == states[2][0] != 0:
-		stop_game = True
-		messagebox.showinfo("Winner", states[0][2] + " Won!")
+        # Check rows
+        for row in range(3):
+            if states[row][0] == states[row][1] == states[row][2] != 0:
+                self.stop_game = True
+                messagebox.showinfo("Winner", states[row][0] + " Won!")
+                return
 
-	elif all(states[i][j] != 0 for i in range(3) for j in range(3)):
-		stop_game = True
-		messagebox.showinfo("tie", "Tie")
+            # Check columns
+            if states[0][row] == states[1][row] == states[2][row] != 0:
+                self.stop_game = True
+                messagebox.showinfo("Winner", states[0][row] + " Won!")
+                return
+
+        # Check diagonals
+        if states[0][0] == states[1][1] == states[2][2] != 0:
+            self.stop_game = True
+            messagebox.showinfo("Winner", states[0][0] + " Won!")
+            return
+
+        if states[0][2] == states[1][1] == states[2][0] != 0:
+            self.stop_game = True
+            messagebox.showinfo("Winner", states[0][2] + " Won!")
+            return
+
+        # Check for tie
+        if all(states[x][y] != 0 for x in range(3) for y in range(3)):
+            self.stop_game = True
+            messagebox.showinfo("Tie", "It's a tie!")
+
+# Initialize game
+game = TicTacToe()
 
 # Design window
 #Creating the Canvas 
@@ -83,27 +102,25 @@ root.resizable(0,0)
 
 #Button
 b = [
-	[0,0,0],
-	[0,0,0],
-	[0,0,0]]
+    [0,0,0],
+    [0,0,0],
+    [0,0,0]]
 
 #text for buttons
 states = [
-	[0,0,0],
-	[0,0,0],
-	[0,0,0]]
+    [0,0,0],
+    [0,0,0],
+    [0,0,0]]
 
-
-
-
+# Create buttons
 for i in range(3):
-	for j in range(3):
-		b[i][j] = Button(
-			height=4, width=8,
-			font=("Helvetica", "20"),
-			command=lambda r=i, c=j: clicked(r, c)
-		)
-		b[i][j].grid(row=i, column=j)
+    for j in range(3):
+        b[i][j] = Button(
+            height=4, width=8,
+            font=("Helvetica", "20"),
+            command=lambda r=i, c=j: game.clicked(r, c)
+        )
+        b[i][j].grid(row=i, column=j)
 
 
-mainloop()		 
+root.mainloop()
