@@ -1,19 +1,38 @@
-# Tic Tac Toe game with GUI
-# using tkinter
 
-# importing all necessary libraries
+"""
+Tic Tac Toe game with GUI using tkinter.
+
+This script allows users to play Tic Tac Toe in single-player 
+(against computer) or multiplayer mode.
+It features a graphical interface, win/tie detection, and computer AI for single-player mode.
+
+Functions:
+	winner(b, l): Check if a player has won.
+	get_text(i, j, gb, l1, l2): Handle player moves in multiplayer mode.
+	isfree(i, j): Check if a cell is free.
+	isfull(): Check if the board is full.
+	gameboard_pl(game_board, l1, l2): Create multiplayer game board.
+	pc(): Decide computer's next move.
+	get_text_pc(i, j, gb, l1, l2): Handle moves in single-player mode.
+	gameboard_pc(game_board, l1, l2): Create single-player game board.
+	withpc(game_board): Start single-player game.
+	withplayer(game_board): Start multiplayer game.
+	play(): Main menu and game launcher.
+"""
+
+
+# Standard library imports
 import random
-import tkinter
-from tkinter import *
 from functools import partial
-from tkinter import messagebox
 from copy import deepcopy
+
+# Third-party imports
+from tkinter import Tk, Button, DISABLED, ACTIVE, messagebox
 
 # sign variable to decide the turn of which player
 sign = 0
 
 # Creates an empty board
-global board
 board = [[" " for x in range(3)] for y in range(3)]
 
 # Check l(O/X) won the match or not
@@ -21,6 +40,15 @@ board = [[" " for x in range(3)] for y in range(3)]
 
 
 def winner(b, l):
+	"""
+	Check if player l ('X' or 'O') has won the game.
+
+	Args:
+		b (list): The game board.
+		l (str): The player's symbol ('X' or 'O').
+	Returns:
+		bool: True if the player has won, False otherwise.
+	"""
 	return ((b[0][0] == l and b[0][1] == l and b[0][2] == l) or
 			(b[1][0] == l and b[1][1] == l and b[1][2] == l) or
 			(b[2][0] == l and b[2][1] == l and b[2][2] == l) or
@@ -32,6 +60,16 @@ def winner(b, l):
 
 # Configure text on button while playing with another player
 def get_text(i, j, gb, l1, l2):
+	"""
+	Handle a player's move in multiplayer mode, update board and check for win/tie.
+
+	Args:
+		i (int): Row index.
+		j (int): Column index.
+		gb: Game board window.
+		l1: Player 1 label/button.
+		l2: Player 2 label/button.
+	"""
 	global sign
 	if board[i][j] == ' ':
 		if sign % 2 == 0:
@@ -58,12 +96,27 @@ def get_text(i, j, gb, l1, l2):
 
 
 def isfree(i, j):
+	"""
+	Check if the cell at (i, j) is free.
+
+	Args:
+		i (int): Row index.
+		j (int): Column index.
+	Returns:
+		bool: True if cell is free, False otherwise.
+	"""
 	return board[i][j] == " "
 
 # Check the board is full or not
 
 
 def isfull():
+	"""
+	Check if the board is full (no empty spaces).
+
+	Returns:
+		bool: True if board is full, False otherwise.
+	"""
 	flag = True
 	for i in board:
 		if(i.count(' ') > 0):
@@ -74,6 +127,14 @@ def isfull():
 
 
 def gameboard_pl(game_board, l1, l2):
+	"""
+	Create the multiplayer game board GUI.
+
+	Args:
+		game_board: The main game window.
+		l1: Player 1 label/button.
+		l2: Player 2 label/button.
+	"""
 	global button
 	button = []
 	for i in range(3):
@@ -93,6 +154,12 @@ def gameboard_pl(game_board, l1, l2):
 
 
 def pc():
+	"""
+	Decide the computer's next move using basic AI.
+
+	Returns:
+		list: The [row, col] of the next move, or None if no moves left.
+	"""
 	possiblemove = []
 	for i in range(len(board)):
 		for j in range(len(board[i])):
@@ -127,6 +194,16 @@ def pc():
 
 
 def get_text_pc(i, j, gb, l1, l2):
+	"""
+	Handle a move in single-player mode, update board, check for win/tie, and trigger computer move.
+
+	Args:
+		i (int): Row index.
+		j (int): Column index.
+		gb: Game board window.
+		l1: Player label/button.
+		l2: Computer label/button.
+	"""
 	global sign
 	if board[i][j] == ' ':
 		if sign % 2 == 0:
@@ -163,6 +240,14 @@ def get_text_pc(i, j, gb, l1, l2):
 
 
 def gameboard_pc(game_board, l1, l2):
+	"""
+	Create the single-player game board GUI.
+
+	Args:
+		game_board: The main game window.
+		l1: Player label/button.
+		l2: Computer label/button.
+	"""
 	global button
 	button = []
 	for i in range(3):
@@ -182,6 +267,12 @@ def gameboard_pc(game_board, l1, l2):
 
 
 def withpc(game_board):
+	"""
+	Initialize and start a single-player game against the computer.
+
+	Args:
+		game_board: The main menu window.
+	"""
 	game_board.destroy()
 	game_board = Tk()
 	game_board.title("Tic Tac Toe")
@@ -197,6 +288,12 @@ def withpc(game_board):
 
 
 def withplayer(game_board):
+	"""
+	Initialize and start a multiplayer game.
+
+	Args:
+		game_board: The main menu window.
+	"""
 	game_board.destroy()
 	game_board = Tk()
 	game_board.title("Tic Tac Toe")
@@ -213,6 +310,9 @@ def withplayer(game_board):
 
 
 def play():
+	"""
+	Launch the main menu and handle user selection for game mode or exit.
+	"""
 	menu = Tk()
 	menu.geometry("250x250")
 	menu.title("Tic Tac Toe")

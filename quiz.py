@@ -1,13 +1,48 @@
+"""
+quiz.py
+
+An interactive multiple-choice quiz game implemented with a Quiz class.
+
+- Presents a series of questions with multiple choices to the user.
+- Accepts user input and checks answers.
+- Tracks and displays the user's score at the end.
+
+Usage:
+    Run the script and follow the prompts in the terminal.
+"""
 class Quiz:
-    def __init__(self, questions):
-        self.questions = questions
+    """
+    A class to represent a multiple-choice quiz game.
+
+    Attributes:
+        questions (list): List of question dictionaries.
+        score (int): The user's current score.
+        question_index (int): The index of the current question.
+    """
+    def __init__(self, question_data):
+        """
+        Initialize the Quiz with a list of questions.
+
+        Args:
+            question_data (list): List of question dictionaries.
+        """
+        self.questions = question_data
         self.score = 0
         self.question_index = 0
 
     def get_next_question(self):
+        """
+        Retrieve the next question in the quiz.
+
+        Returns:
+            dict: The next question dictionary.
+        """
         return self.questions[self.question_index]
 
     def play(self):
+        """
+        Start the quiz game, prompt the user for answers, and display the final score.
+        """
         while self.question_index < len(self.questions):
             current_question = self.get_next_question()
             print(f"Q{self.question_index + 1}: {current_question['question']}")

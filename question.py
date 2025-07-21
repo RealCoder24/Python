@@ -1,9 +1,24 @@
+"""
+question.py
+
+A simple interactive quiz game that asks the user three questions 
+related to programming and Python learning resources.
+
+- Greets the user and asks if they are ready to play.
+- Asks three questions, checks answers, and keeps score.
+- Displays the user's score and percentage at the end.
+- Exits gracefully if the user is not ready to play.
+
+Usage:
+    Run the script and follow the prompts in the terminal.
+"""
 print('Welcome to AskPython Quiz')
 answer = input('Are you ready to play the Quiz? (yes/no): ')
-score = 0
-total_questions = 3
+
+TOTAL_QUESTIONS = 3
 
 if answer.lower() == 'yes':
+    score = 0
     answer = input('Question 1: What is your favorite programming language? ')
     if answer.lower() == 'python':
         score += 1
@@ -26,7 +41,7 @@ if answer.lower() == 'yes':
         print('Wrong Answer :(')
 
     print(f'Thank you for playing this small quiz game. You attempted {score} questions correctly!')
-    mark = (score / total_questions) * 100
-    print(f'Marks obtained: {mark:.1f}')
+    MARK = (score / TOTAL_QUESTIONS) * 100
+    print(f'Marks obtained: {MARK:.1f}')
 else:
     print('Goodbye!')
