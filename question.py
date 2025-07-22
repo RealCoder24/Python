@@ -17,31 +17,36 @@ answer = input('Are you ready to play the Quiz? (yes/no): ')
 
 TOTAL_QUESTIONS = 3
 
-if answer.lower() == 'yes':
+def run_quiz():
+    """Run the quiz game, ask questions, and calculate the score."""
+    print('Let\'s start the quiz!')
     score = 0
-    answer = input('Question 1: What is your favorite programming language? ')
-    if answer.lower() == 'python':
+    ans = input('Question 1: What is your favorite programming language? ')
+    if ans.lower() == 'python':
         score += 1
         print('Correct!')
     else:
         print('Wrong Answer :(')
 
-    answer = input('Question 2: Do you follow any author on AskPython? ')
-    if answer.lower() == 'yes':
+    ans = input('Question 2: Do you follow any author on AskPython? ')
+    if ans.lower() == 'yes':
         score += 1
         print('Correct!')
     else:
         print('Wrong Answer :(')
 
-    answer = input('Question 3: What is the name of your favorite website for learning Python? ')
-    if answer.lower() == 'askpython':
+    ans = input('Question 3: What is the name of your favorite website for learning Python? ')
+    if ans.lower() == 'askpython':
         score += 1
         print('Correct!')
     else:
         print('Wrong Answer :(')
 
     print(f'Thank you for playing this small quiz game. You attempted {score} questions correctly!')
-    MARK = (score / TOTAL_QUESTIONS) * 100
-    print(f'Marks obtained: {MARK:.1f}')
+    mark = (score / TOTAL_QUESTIONS) * 100
+    print(f'Marks obtained: {mark:.1f}')
+
+if answer.lower() == 'yes':
+    run_quiz()
 else:
     print('Goodbye!')
