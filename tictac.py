@@ -6,7 +6,7 @@ This script allows two players to play Tic Tac Toe on a 3x3 grid.
 It features a graphical interface, win/tie detection, and alternating turns.
 """
 # Importing Packages from tkinter
-from tkinter import Button, messagebox, Tk 
+from tkinter import Button, messagebox, Tk
 # Initialize the game board buttons
 b = [
     [0, 0, 0],
@@ -35,7 +35,7 @@ class TicTacToe:
     def __init__(self):
         self.current_player = 'X'
         self.stop_game = False
-        
+
     def clicked(self, r, c):
         """
         Handle a player's move, update the board, and check for a win or tie.
@@ -94,10 +94,10 @@ class TicTacToe:
 game = TicTacToe()
 
 # Design window
-#Creating the Canvas 
+#Creating the Canvas
 root = Tk()
-# Title of the window			 
-root.title("GeeksForGeeks-:Tic Tac Toe") 
+# Title of the window
+root.title("GeeksForGeeks-:Tic Tac Toe")
 root.resizable(0,0)
 
 #Button

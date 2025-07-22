@@ -148,10 +148,10 @@ class TicTacToeGame:
                 get_t = partial(self.handle_multiplayer_move, i, j, game_board, l1, l2)
                 self.button[i].append(
                     Button(
-                        game_board, 
-                        bd=5, 
-                        command=get_t, 
-                        height=4, 
+                        game_board,
+                        bd=5,
+                        command=get_t,
+                        height=4,
                         width=8
                     )
                 )
@@ -180,7 +180,7 @@ class TicTacToeGame:
 
         if not possible_moves:
             return None
-     
+
         # Check for winning move or blocking opponent's win
         for symbol in ['O', 'X']:
             for move in possible_moves:
@@ -188,29 +188,29 @@ class TicTacToeGame:
                 board_copy[move[0]][move[1]] = symbol
                 if self.winner(symbol, board_copy):
                     return move
-                    
+
         # Take center if available
         if [1, 1] in possible_moves:
             return [1, 1]
-            
+
         # Take corners
-        corners = [move for move in possible_moves 
+        corners = [move for move in possible_moves
                   if move in [[0, 0], [0, 2], [2, 0], [2, 2]]]
         if corners:
             return corners[random.randint(0, len(corners)-1)]
-            
+
         # Take edges
-        edges = [move for move in possible_moves 
+        edges = [move for move in possible_moves
                 if move in [[0, 1], [1, 0], [1, 2], [2, 1]]]
         if edges:
             return edges[random.randint(0, len(edges)-1)]
-            
+
         return None
 
     def handle_singleplayer_move(self, i, j, gb, l1, l2):
         """
-        Handle a move in single-player mode, update board, check for win/tie, and trigger computer move.
-
+        Handle a move in single-player mode, update board, check 
+        for win/tie, and trigger computer move.
         Args:
             i (int): Row index.
             j (int): Column index.
@@ -244,7 +244,7 @@ class TicTacToeGame:
                     self.board[move[0]][move[1]] = "O"
                     self.button[move[0]][move[1]].config(text="O")
                     self.sign += 1
-                    
+
                     # Check if computer won
                     if self.winner("O"):
                         gb.destroy()
@@ -290,13 +290,13 @@ class TicTacToeGame:
         menu.destroy()
         game_board = Tk()
         game_board.title("Tic Tac Toe")
-        
+
         # Create player buttons/labels
         l1 = Button(game_board, text="Player : X", width=10)
         l1.grid(row=1, column=1)
         l2 = Button(game_board, text="Computer : O", width=10, state=DISABLED)
         l2.grid(row=2, column=1)
-        
+
         # Initialize game board
         self.create_singleplayer_board(game_board, l1, l2)
 
@@ -313,13 +313,13 @@ class TicTacToeGame:
         menu.destroy()
         game_board = Tk()
         game_board.title("Tic Tac Toe")
-        
+
         # Create player buttons/labels
         l1 = Button(game_board, text="Player 1 : X", width=10)
         l1.grid(row=1, column=1)
         l2 = Button(game_board, text="Player 2 : O", width=10, state=DISABLED)
         l2.grid(row=2, column=1)
-        
+
         # Initialize game board
         self.create_multiplayer_board(game_board, l1, l2)
 
@@ -342,7 +342,7 @@ class TicTacToeGame:
                     font='summer',
                     bd=5)
 
-        B1 = Button(menu,
+        b1 = Button(menu,
                     text="Single Player",
                     command=lambda: self.start_singleplayer(menu),
                     activeforeground='red',
@@ -353,7 +353,7 @@ class TicTacToeGame:
                     font='summer',
                     bd=5)
 
-        B2 = Button(menu,
+        b2 = Button(menu,
                     text="Multi Player",
                     command=lambda: self.start_multiplayer(menu),
                     activeforeground='red',
@@ -364,7 +364,7 @@ class TicTacToeGame:
                     font='summer',
                     bd=5)
 
-        B3 = Button(menu,
+        b3 = Button(menu,
                     text="Exit",
                     command=menu.quit,
                     activeforeground='red',
@@ -377,9 +377,9 @@ class TicTacToeGame:
 
         # Pack buttons in order
         head.pack(side='top')
-        B1.pack(side='top')
-        B2.pack(side='top')
-        B3.pack(side='top')
+        b1.pack(side='top')
+        b2.pack(side='top')
+        b3.pack(side='top')
 
         menu.mainloop()
 
